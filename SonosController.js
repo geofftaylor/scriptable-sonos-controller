@@ -23,8 +23,7 @@ class SonosController {
     groupvolume: 'groupvolume/',
     previous: 'previous',
     addPlayer: 'add/',
-    ungroup: 'ungroup',
-    leave: 'leave',
+    ungroup: 'ungroup'
   }
 
   // *********************************************************************
@@ -485,6 +484,44 @@ class SonosController {
   }
 
   /**
+   * Plays a favorite (station, playlist, etc.) in all rooms. Internally, this method calls `groupAllRoomsWith` with the first room returned by `getRooms`, then it calls `playFavorite` with that same room.
+   * @param {string} favorite The name of a "favorited" station, playlist, etc.
+   * @returns {string} The status of the underlying API call if the call is successful. Otherwise returns an error message.
+   */
+  async playFavoriteEverywhere(favorite) {
+    let allRooms = null;
+    let room = null;
+    let result = null;
+
+    try {
+      allRooms = await this.getRooms();
+      room = allRooms[0];
+    } catch (error) {
+      result = `error: ${error}`;
+
+      // No need to continue.
+      return result;
+    }
+
+    try {
+      result = await this.groupAllRoomsWith(room);
+    } catch (error) {
+      result = `error: ${error}`;
+
+      // No need to continue.
+      return result;
+    }
+
+    try {
+      result = await this.playFavorite(favorite, room);
+    } catch (error) {
+      result = `error: ${error}`;
+    }
+
+    return result;
+  }
+
+  /**
    * Plays a Sonos playlist in `room`.
    * @param {string} playlist The name of a Sonos playlist.
    * @param {string} room     The name of a room in the Sonos system.
@@ -507,6 +544,44 @@ class SonosController {
     return result;
   }
 
+  /**
+   * Plays a Sonos playlist in all rooms. Internally, this method calls `groupAllRoomsWith` with the first room returned by `getRooms`, then it calls `playPlaylist` with that same room.
+   * @param {string} playlist The name of a Sonos playlist.
+   * @returns {string} The status of the underlying API call if the call is successful. Otherwise returns an error message.
+   */
+  async playPlaylistEverywhere(playlist) {
+    let allRooms = null;
+    let room = null;
+    let result = null;
+
+    try {
+      allRooms = await this.getRooms();
+      room = allRooms[0];
+    } catch (error) {
+      result = `error: ${error}`;
+
+      // No need to continue.
+      return result;
+    }
+
+    try {
+      result = await this.groupAllRoomsWith(room);
+    } catch (error) {
+      result = `error: ${error}`;
+
+      // No need to continue.
+      return result;
+    }
+
+    try {
+      result = await this.playPlaylist(playlist, room);
+    } catch (error) {
+      result = `error: ${error}`;
+    }
+
+    return result;
+  }
+
   // *********************************************************************
   // GROUP CONTROL METHODS
   // *********************************************************************
@@ -515,13 +590,13 @@ class SonosController {
    * Groups `others` with `room` ("other" rooms will start playing whatever is playing in `room`).
    * @param {string} room   The name of a room in the Sonos system.
    * @param {Array}  others An array of one or more room names.
-   * @returns {Object} An object in the form `{status: 'success', rooms: [{name: 'Room 1', status: 'success'}, {name: 'Room 2', status: 'success'}]}`. If all rooms were successfully grouped, `status` will be 'success'. If at least one room couldn't be grouped, `status` will be 'error'. The `rooms` array contains the results of attempting to add each room to the group.
+   * @returns {Object} An object in the form `{status: 'success', rooms: [{name: 'Room 1', status: 'success'}, {name: 'Room 2', status: 'success'}]}`. If all rooms were successfully grouped, `status` will be 'success'. If at least one room couldn't be grouped, `status` will be 'error'. The `rooms` array contains the result of attempting to add each room to the group.
    */
   async group(room, others) {
     const isSuccess = (currentValue) => currentValue === 'success';
     let status = null;
 
-    let results = {
+    let result = {
       status: status,
       rooms: []
     }
@@ -536,22 +611,22 @@ class SonosController {
 
         try {
           resp = await req.loadJSON();
-          results.rooms.push({name: other, status: resp['status']});
+          result.rooms.push({name: other, status: resp['status']});
         } catch (error) {
-          results.rooms.push({name: other, status: error});
+          result.rooms.push({name: other, status: error});
         }
       }
     }
 
-    if (results.rooms.flatMap(o => o['status']).every(isSuccess)) {
+    if (result.rooms.flatMap(o => o['status']).every(isSuccess)) {
       status = 'success';
     } else {
       status = 'error';
     }
 
-    results.status = status;
+    result.status = status;
 
-    return results;
+    return result;
   }
 
   /**
@@ -561,31 +636,35 @@ class SonosController {
    */
   async groupAllRoomsWith(room) {
     let allRooms = null;
+    let result = null;
 
     try {
       allRooms = await this.getRooms();
-
-      // Remove `room` from `allRooms`.
-      let otherRooms = allRooms.filter(a => a !== room);
-
-      results = await this.group(room, otherRooms);
     } catch (error) {
-      results = ({status: `error: ${error}`});
+      result = {status: `error: ${error}`};
     }
 
-    return results;
+    try {
+      // Remove `room` from `allRooms`.
+      let otherRooms = allRooms.filter(a => a !== room);
+      result = await this.group(room, otherRooms);
+    } catch (error) {
+      result = {status: `error: ${error}`};
+    }
+
+    return result;
   }
 
   /**
    * Removes `rooms` from their current group(s). (Playback will stop in `rooms`.)
    * @param {Array} rooms An array of one or more room names.
-   * @returns {Object} An object in the form `{status: 'success', rooms: [{name: 'Room 1', status: 'success'}, {name: 'Room 2', status: 'success'}]}`. If all rooms were successfully ungrouped, `status` will be 'success'. If at least one room couldn't be ungrouped, `status` will be 'error'. The `rooms` array contains the results of attempting to ungroup each room.
+   * @returns {Object} An object in the form `{status: 'success', rooms: [{name: 'Room 1', status: 'success'}, {name: 'Room 2', status: 'success'}]}`. If all rooms were successfully ungrouped, `status` will be 'success'. If at least one room couldn't be ungrouped, `status` will be 'error'. The `rooms` array contains the result of attempting to ungroup each room.
    */
   async ungroup(rooms) {
     const isSuccess = (currentValue) => currentValue === 'success';
     let status = null;
 
-    let results = {
+    let result = {
       status: status,
       rooms: []
     }
@@ -593,21 +672,21 @@ class SonosController {
     for (let room of rooms) {
       try {
         let resp = await this._performActionInRoom('ungroup', room);
-        results.rooms.push({name: room, status: resp['status']});
+        result.rooms.push({name: room, status: resp['status']});
       } catch (error) {
-        results.rooms.push({name: room, status: error});
+        result.rooms.push({name: room, status: error});
       }
     }
     
-    if (results.rooms.flatMap(o => o['status']).every(isSuccess)) {
+    if (result.rooms.flatMap(o => o['status']).every(isSuccess)) {
       status = 'success';
     } else {
       status = 'error';
     }
     
-    results.status = status;
+    result.status = status;
 
-    return results;
+    return result;
   }
 
   /**
@@ -618,6 +697,7 @@ class SonosController {
   async ungroupAllRoomsFrom(room) {
     const isSuccess = (currentValue) => currentValue === 'success';
     let roomsToUngroup = null;
+    let result = null;
 
     // Find the group that contains `room`.
     try {
@@ -634,28 +714,27 @@ class SonosController {
         }
       }
     } catch (error) {
-      results = ({status: `error: ${error}`});
+      result = {status: `error: ${error}`};
 
       // No need to continue.
-      return results;
+      return result;
     }
 
     if (roomsToUngroup === null) {
       // `room` isn't in a group.
-      status = `error: ${room} is not part of a group.`;
-      results.status = status;
+      result = {status: `error: ${room} is not part of a group.`};
 
       // No need to continue.
-      return results;
+      return result;
     } else {
       try {
-        results = await this.ungroup(roomsToUngroup);
+        result = await this.ungroup(roomsToUngroup);
       } catch (error) {
-        results = ({status: `error: ${error}`});
+        result = {status: `error: ${error}`};
       }
     }
 
-    return results;
+    return result;
   }
 
   /**
