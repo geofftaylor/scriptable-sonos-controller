@@ -32,12 +32,3 @@ Examples:
 * Play a playlist in a room: `await controller.playPlaylist('My Playlist', 'Living Room');`
 
 (All of the methods are asynchronous, so use `await` if you need things to happen in a particular sequence.)
-
-# Public methods
-The "public" methods are the methods not prefixed by an underscore. None of these methods throw exceptions, though they may return error messages. In general, the output will contain "success" or an error message. Some methods return more detailed information. See the [documentation](docs/SonosController.md) for a list of the methods, their parameters and their return values.
-
-# Internal methods
-The methods prefixed with an underscore are "internal" methods that are used by the public methods. You can use these methods if you want, but be aware that they may throw exceptions, so you'll need to handle those accordingly. These methods aren't included in the [documentation](docs/SonosController.md), but the parameters, return values, etc. are documented in [`SonosController.js`](./SonosController.js).
-
-# Tests
-[`SonosControllerTests.js`](./SonosControllerTests.js) is a very basic test suite for the `SonosController` class. If you want to run the tests, copy `SonosControllerTests.js` to Scriptable and change the values in the block marked "TEST DATA. CHANGE THESE VALUES." Then run the script inside the app. There is a configurable delay (default: 5 seconds) between each test to allow time to manually evaluate (by observing your Sonos system) the success or failure of the test.
