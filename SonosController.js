@@ -125,23 +125,27 @@ class SonosController {
 
   /**
    * Tests connectivity to the Sonos HTTP API server.
-   * @returns {string} The status of the underlying API call if the call is successful. Otherwise returns an error message.
+   * @returns {boolean} Returns `true` if the controller can communicate with the server. Otherwise returns `false`.
    */
-  async testConnection() {
+  async isConnected() {
     // Calling the 'services' endpoint without any parameters should return {'status': 'success'}.
     let url = this.sonosBaseUrl + 'services';
     url = encodeURI(url);
     let req = new Request(url=url);
-    let status = null;
+    let connected = null;
 
     try {
       let resp = await req.loadJSON();
-      status = resp['status'];
+      if (resp['status'] === 'success') {
+        connected = true
+      } else {
+        connected = false;
+      }
     } catch (error) {
-      status = `error: ${error}`;
+      connected = false;
     }
 
-    return status;
+    return connected;
   }
 
   /**

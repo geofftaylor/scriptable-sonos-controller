@@ -26,8 +26,8 @@ let testResults = {};
 
 // Test connectivity to server. If successful, run the tests.
 try {
-  resp = await controller.testConnection();
-  if (resp === 'success') {
+  let connected = await controller.isConnected();
+  if (connected) {
     runTests = true;
   } else {
     let message = `Unable to connect to the server. Verify that the server is running at ${controller.sonosBaseUrl}.`;
@@ -74,11 +74,6 @@ function createHTML(includeOutput=false) {
       font-size: 1.5em;
     }
 
-    #main {
-      width: 90%;
-      max-width: 90vw;
-    }
-
     table, tr, th, td {
       border: 1px solid black;
     }
@@ -118,7 +113,7 @@ function createHTML(includeOutput=false) {
     tableHeader = '<th>Test Name</th><th>Test Result</th>';
   }
 
-  let html = `<html>${head}<body><div id="main">`;
+  let html = `<html>${head}<body>`;
   html += `<table><tr>${tableHeader}</tr>`;
 
   for (r in testResults) {
@@ -138,7 +133,7 @@ function createHTML(includeOutput=false) {
     }
   }
 
-  html += '</table></div></body></html>';
+  html += '</table></body></html>';
   return html;
 }
 
