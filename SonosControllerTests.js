@@ -55,6 +55,22 @@ if (runTests) {
   await displayTestReport();
 }
 
+// Test if two arrays are equal.
+function arraysAreEqual(arr1, arr2) {
+  // `arr1` and `arr2` must be arrays.
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    return false;
+  }
+
+  // Arrays must be the same length.
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  // `arr2` must contain every element in `arr1`.
+  return arr1.every(element => arr2.includes(element));
+}
+
 // Pass in the test name as a string and a boolean.
 // If `booleanResult` is true, the test passed. Else the test failed.
 function testPassed(testName, testOutput, booleanResult) {
@@ -425,7 +441,7 @@ async function groupTests(mainRoom, roomsToGroup, playlist, millisecondsBetweenT
   console.log(`Testing ${testName}...`);
   output = await controller.getRoomsInGroupInclusive(mainRoom);
   console.log(output);
-  result = output !== null && output.sort() === threeRooms;
+  result = output !== null && arraysAreEqual(output, threeRooms);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -435,7 +451,7 @@ async function groupTests(mainRoom, roomsToGroup, playlist, millisecondsBetweenT
   testName = 'Get Rooms in Group Exclusive';
   console.log(`Testing ${testName}...`);
   output = await controller.getRoomsInGroupExclusive(mainRoom);
-  result = output !== null && output.sort() === roomsToGroup;
+  result = output !== null && arraysAreEqual(output, roomsToGroup);
   console.log(output);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
