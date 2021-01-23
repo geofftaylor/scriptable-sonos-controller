@@ -1,3 +1,6 @@
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
+// icon-color: yellow; icon-glyph: clipboard-check;
 // Tests to be run inside of Scriptable.
 // Depending on the number of Sonos speakers that you have, you may need to alter some of the tests.
 // Note that these tests aren't very smart or comprehensive. They generally just check for the right type of output.
@@ -6,10 +9,12 @@
 // (The easiest way to assess the outcome of many of the tests is to watch what happens in the Sonos app on a different device than the one that's running this script.
 
 // **** TEST DATA. CHANGE THESE VALUES. ****
+const allRooms = ['Basement', 'Kitchen', 'Living Room', 'Move-Master Bedroom', 'Office']; // All rooms in the system.
+const threeRooms = ['Kitchen', 'Living Room', 'Office']; // Used to validate grouping.
+const roomsToGroup = ['Kitchen', 'Living Room']; // This is used for `roomsToGroup` in the test functions.
 const mainRoom = 'Office'; // This is used for `mainRoom` in the test functions.
 const favorite = 'Downtempo'; // This is used for `favorite` in the test functions.
 const playlist = 'Test Playlist'; // This is used for `playlist` in the test functions.
-const roomsToGroup = ['Kitchen', 'Living Room']; // This is used for `roomsToGroup` in the test functions.
 const millisecondsBetweenTests = 5000; // Delay between each test. 1000 = 1 second
 // **** END TEST DATA. DO NOT CHANGE ANYTHING BELOW THIS LINE. ****
 
@@ -159,7 +164,7 @@ async function systemInformationTests() {
   testName = 'Get Services';
   console.log(`Testing ${testName}...`);
   output = await controller.getServices();
-  result = output !== null && typeof output === 'object';
+  result = output !== null && Object.keys(output).includes('Pandora');
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -167,7 +172,7 @@ async function systemInformationTests() {
   testName = 'Get Zones';
   console.log(`Testing ${testName}...`);
   output = await controller.getZones();
-  result = output !== null && typeof output === 'object';
+  result = Array.isArray(output);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -175,7 +180,14 @@ async function systemInformationTests() {
   testName = 'Get Rooms';
   console.log(`Testing ${testName}...`);
   output = await controller.getRooms();
-  result = output !== null && typeof output === 'object';
+  result = Array.isArray(output) && output.length === allRooms.length;
+  testPassed(testName, output, result);
+  console.log(`Finished testing ${testName}.`);
+
+  testName = 'Get Groups';
+  console.log(`Testing ${testName}...`);
+  output = await controller.getGroups();
+  result = Array.isArray(output) && output.length > 0;
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -183,7 +195,7 @@ async function systemInformationTests() {
   testName = 'Get Favorites';
   console.log(`Testing ${testName}...`);
   output = await controller.getFavorites();
-  result = output !== null && typeof output === 'object';
+  result = Array.isArray(output) && output.includes(favorite);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -191,7 +203,7 @@ async function systemInformationTests() {
   testName = 'Get Playlists';
   console.log(`Testing ${testName}...`);
   output = await controller.getPlaylists();
-  result = output !== null && typeof output === 'object';
+  result = Array.isArray(output) && output.includes(playlist);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -228,6 +240,24 @@ async function roomTests(mainRoom, favorite, playlist, millisecondsBetweenTests=
   console.log(`Testing ${testName}...`);
   output = await controller.getCurrentTrack(mainRoom);
   result = output !== null && typeof output === 'object';
+  testPassed(testName, output, result);
+  console.log(`Finished testing ${testName}.`);
+
+  // Get the current track's album art.
+  testName = 'Get Album Art';
+  console.log(`Testing ${testName}...`);
+  currentTrack = await controller.getCurrentTrack(mainRoom);
+  output = await controller.getAlbumArt(currentTrack.albumArtUri);
+  result = output !== null && output.size.width > 0;
+  testPassed(testName, output, result);
+  console.log(`Finished testing ${testName}.`);
+
+  // Get the current track's album art as a base64 encoded string.
+  testName = 'Get Album Art as base64';
+  console.log(`Testing ${testName}...`);
+  currentTrack = await controller.getCurrentTrack(mainRoom);
+  output = await controller.getAlbumArtAsBase64(currentTrack.albumArtUri);
+  result = output !== null;
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -359,7 +389,8 @@ async function groupTests(mainRoom, roomsToGroup, playlist, millisecondsBetweenT
   testName = 'Group 2 Rooms';
   console.log(`Testing ${testName}...`);
   output = await controller.group(mainRoom, [roomsToGroup[0]]);
-  result = output !== null && typeof output === 'object';
+  result = output !== null && !output.startsWith('error');
+  testPassed(testName, output, result);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -370,7 +401,8 @@ async function groupTests(mainRoom, roomsToGroup, playlist, millisecondsBetweenT
   testName = 'Ungroup 1 Room';
   console.log(`Testing ${testName}...`);
   output = await controller.ungroup([roomsToGroup[0]]);
-  result = output !== null && typeof output === 'object';
+  result = output !== null && !output.startsWith('error');
+  testPassed(testName, output, result);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -381,7 +413,30 @@ async function groupTests(mainRoom, roomsToGroup, playlist, millisecondsBetweenT
   testName = 'Group 3 Rooms';
   console.log(`Testing ${testName}...`);
   output = await controller.group(mainRoom, roomsToGroup);
-  result = output !== null && typeof output === 'object';
+  result = output !== null && !output.startsWith('error');
+  testPassed(testName, output, result);
+  testPassed(testName, output, result);
+  console.log(`Finished testing ${testName}.`);
+
+  // Wait before running next test.
+  sleep(millisecondsBetweenTests);
+
+  testName = 'Get Rooms in Group Inclusive';
+  console.log(`Testing ${testName}...`);
+  output = await controller.getRoomsInGroupInclusive(mainRoom);
+  console.log(output);
+  result = output !== null && output.sort() === threeRooms;
+  testPassed(testName, output, result);
+  console.log(`Finished testing ${testName}.`);
+
+  // Wait before running next test.
+  sleep(millisecondsBetweenTests);
+
+  testName = 'Get Rooms in Group Exclusive';
+  console.log(`Testing ${testName}...`);
+  output = await controller.getRoomsInGroupExclusive(mainRoom);
+  result = output !== null && output.sort() === roomsToGroup;
+  console.log(output);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -414,7 +469,8 @@ async function groupTests(mainRoom, roomsToGroup, playlist, millisecondsBetweenT
   testName = 'Ungroup 2 Rooms';
   console.log(`Testing ${testName}...`);
   output = await controller.ungroup(roomsToGroup);
-  result = output !== null && typeof output === 'object';
+  result = output !== null && !output.startsWith('error');
+  testPassed(testName, output, result);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -425,7 +481,8 @@ async function groupTests(mainRoom, roomsToGroup, playlist, millisecondsBetweenT
   testName = 'Group All Rooms With Main Room';
   console.log(`Testing ${testName}...`);
   output = await controller.groupAllRoomsWith(mainRoom);
-  result = output !== null && typeof output === 'object';
+  result = output !== null && !output.startsWith('error');
+  testPassed(testName, output, result);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
@@ -436,7 +493,8 @@ async function groupTests(mainRoom, roomsToGroup, playlist, millisecondsBetweenT
   testName = 'Ungroup All From Main Room';
   console.log(`Testing ${testName}...`);
   output = await controller.ungroupAllRoomsFrom(mainRoom);
-  result = output !== null && typeof output === 'object';
+  result = output !== null && !output.startsWith('error');
+  testPassed(testName, output, result);
   testPassed(testName, output, result);
   console.log(`Finished testing ${testName}.`);
 
