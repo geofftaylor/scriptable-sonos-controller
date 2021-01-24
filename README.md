@@ -32,3 +32,5 @@ Examples:
 * Play a playlist in a room: `await controller.playPlaylist('My Playlist', 'Living Room');`
 
 (All of the methods are asynchronous, so use `await` if you need things to happen in a particular sequence.)
+
+See the Examples directory for examples of small and medium "now playing" widgets built using this module.
