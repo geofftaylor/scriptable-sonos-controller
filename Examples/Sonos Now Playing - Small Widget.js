@@ -47,13 +47,6 @@ if (anyRoom) {
 let widgetAction = `shortcuts://run-shortcut?name=Toggle%20Sonos%20Playback&input=${encodeURI(playingRoom)}`; // URL to open when the widget text is tapped.
 // **** END WIDGET CONFIGURATION, PART 2 ****
 
-// Play and pause icons.
-const playIcon = SFSymbol.named('play.fill');
-playIcon.applyFont(Font.boldSystemFont(15));
-const pauseIcon = SFSymbol.named('pause.fill');
-pauseIcon.applyFont(Font.boldSystemFont(15));
-let actionIcon = null;
-
 // Get the details of the currently playing track.
 let track = await controller.getCurrentTrack(playingRoom);
 
@@ -70,20 +63,6 @@ let artist = widget.addText(track.artist)
 artist.textColor = textColor;
 artist.font = Font.regularSystemFont(18);
 artist.centerAlignText();
-
-widget.addSpacer();
-
-let playPauseStack = widget.addStack();
-playPauseStack.addSpacer();
-
-let iconSize = new Size(20, 20);
-for (icon of [playIcon, pauseIcon]) {
-  let image = playPauseStack.addImage(icon.image);
-  image.imageSize = iconSize;
-  image.tintColor = textColor;
-}
-
-playPauseStack.addSpacer();
 
 widget.addSpacer();
 
