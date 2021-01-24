@@ -44,7 +44,7 @@ if (anyRoom) {
 }
 
 // **** WIDGET CONFIGURATION, PART 2 ****
-let widgetAction = `shortcuts://run-shortcut?name=Toggle%20Sonos%20Playback&input=${encodeURI(playingRoom)}`; // URL to open when the widget text is tapped.
+let widgetAction = 'sonos://'; // URL to open when the widget text is tapped.
 // **** END WIDGET CONFIGURATION, PART 2 ****
 
 // Get the details of the currently playing track.
