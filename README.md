@@ -24,7 +24,7 @@ const settings = importModule('SonosSettings');
 const controller = new SonosController(settings.sonosServerUrl);
 ```
 
-You can then access any of the [methods](docs/SonosController.md) via the `controller`.
+You can then access any of the [methods](./docs/SonosController.md) via the `controller`.
 
 Examples:
 
