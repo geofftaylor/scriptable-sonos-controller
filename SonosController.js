@@ -401,7 +401,7 @@ class SonosController {
 
   /**
    * Returns the album art as an [Image](https://docs.scriptable.app/image/) object.
-   * @param {string} albumArtUri The URI of the album art returned by `getCurrentTrack` or `getNextTrack`.
+   * @param {string} albumArtUri The album art URI returned by `getCurrentTrack` or `getNextTrack`.
    * @returns {Image} An [Image](https://docs.scriptable.app/image/) object or `null` if the image could not be loaded.
    */
   async getAlbumArt(albumArtUri) {
@@ -418,8 +418,8 @@ class SonosController {
   }
 
   /**
-   * Returns the album art as an base64 encoded string.
-   * @param {string} albumArtUri The URI of the album art returned by `getCurrentTrack` or `getNextTrack`.
+   * Returns the album art as a base64 encoded string.
+   * @param {string} albumArtUri The album art URI returned by `getCurrentTrack` or `getNextTrack`.
    * @returns {string} A base64 encoded string or `null` if the image could not be encoded.
    */
   async getAlbumArtAsBase64(albumArtUri) {
@@ -557,7 +557,7 @@ class SonosController {
   }
 
   /**
-   * Plays a favorite (station, playlist, etc.) in `room`.
+   * Plays a favorite station, playlist, etc. in `room`.
    * @param {string} favorite The name of a "favorited" station, playlist, etc.
    * @param {string} room     The name of a room in the Sonos system.
    * @returns {string} The status of the underlying API call if the call is successful. Otherwise returns an error message.
@@ -575,7 +575,7 @@ class SonosController {
   }
 
   /**
-   * Plays a favorite (station, playlist, etc.) in all rooms. Internally, this method calls `groupAllRoomsWith` with the first room returned by `getRooms`, then it calls `playFavorite` with that same room.
+   * Plays a favorite station, playlist, etc. in all rooms. Internally, this method calls `groupAllRoomsWith` with the first room returned by `getRooms`, then it calls `playFavorite` with that same room.
    * @param {string} favorite The name of a "favorited" station, playlist, etc.
    * @returns {string} The status of the underlying API call if the call is successful. Otherwise returns an error message.
    */
