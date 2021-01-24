@@ -1,15 +1,15 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: yellow; icon-glyph: clipboard-check;
+
 // Tests to be run inside of Scriptable.
 // Depending on the number of Sonos speakers that you have, you may need to alter some of the tests.
-// Note that these tests aren't very smart or comprehensive. They generally just check for the right type of output.
-// There's still a lot of human judgment required (e.g., Did the right station start playing in the right room?).
-// The tests could be written to make some of those judgments, but I don't think the outcome is worth the effort.
-// (The easiest way to assess the outcome of many of the tests is to watch what happens in the Sonos app on a different device than the one that's running this script.
+// Note that these tests aren't very smart or comprehensive. Many of them just check for the right type of output.
+// There's still some human judgment required (e.g., Did the right station start playing in the right room?).
+// (The easiest way to assess the outcome of many of the tests is to watch what happens in the Sonos app on a different device than the one that's running this script.)
 
 // **** TEST DATA. CHANGE THESE VALUES. ****
-const allRooms = ['Basement', 'Kitchen', 'Living Room', 'Move-Master Bedroom', 'Office']; // All rooms in the system.
+const allRooms = ['Basement', 'Kitchen', 'Living Room', 'Office']; // All rooms in the system.
 const threeRooms = ['Kitchen', 'Living Room', 'Office']; // Used to validate grouping.
 const roomsToGroup = ['Kitchen', 'Living Room']; // This is used for `roomsToGroup` in the test functions.
 const mainRoom = 'Office'; // This is used for `mainRoom` in the test functions.
