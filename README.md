@@ -10,10 +10,11 @@ A Sonos control module for [Scriptable](https://scriptable.app/).
 
 # Usage
 
-1. Copy `SonosController.js` to a location where Scriptable's `importModule` function can find it. (If you're using iCloud Drive, copy the file to the Scriptable folder in iCloud Drive. See the [importModule documentation](https://docs.scriptable.app/importmodule/) for other suitable locations.)
-2. Copy `SonosSettings.js` to a location where Scriptable's `importModule` function can find it. (If you're using iCloud Drive, copy the file to the Scriptable folder in iCloud Drive. See the [importModule documentation](https://docs.scriptable.app/importmodule/) for other suitable locations.)
-3. Change the `sonosServerUrl` value in `SonosSettings.js` to the IP address of the computer where the Sonos HTTP API server is running.
-4. Create a new script in Scriptable. At the top of the script, add these lines:
+1. Install the [Sonos HTTP API](https://github.com/jishi/node-sonos-http-api) server on a computer that's on the same network as your Sonos system. (A Raspberry Pi works well for this purpose.)
+2. Copy `SonosController.js` to a location where Scriptable's `importModule` function can find it. (If you're using iCloud Drive, copy the file to the Scriptable folder in iCloud Drive. See the [importModule documentation](https://docs.scriptable.app/importmodule/) for other suitable locations.)
+3. Copy `SonosSettings.js` to a location where Scriptable's `importModule` function can find it. (If you're using iCloud Drive, copy the file to the Scriptable folder in iCloud Drive. See the [importModule documentation](https://docs.scriptable.app/importmodule/) for other suitable locations.)
+4. Change the `sonosServerUrl` value in `SonosSettings.js` to the IP address of the computer where the Sonos HTTP API server is running.
+5. Create a new script in Scriptable. At the top of the script, add these lines:
 
 ```
 // Import the controller class and settings.
