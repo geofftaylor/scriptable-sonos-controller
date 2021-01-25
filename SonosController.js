@@ -341,7 +341,7 @@ class SonosController {
         room: room,
         type: currentTrack['type'],
         service: service,
-        station: currentTrack['station'],
+        station: currentTrack['stationName'],
         trackUri: currentTrack['uri'],
       }
 
@@ -388,7 +388,6 @@ class SonosController {
           room: room,
           type: nextTrack['type'],
           service: service,
-          station: nextTrack['station'],
           trackUri: nextTrack['uri'],
         }
 
