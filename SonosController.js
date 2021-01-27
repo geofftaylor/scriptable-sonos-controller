@@ -39,7 +39,8 @@ class SonosController {
    * @returns {string}
    */
   _formatRoomForUrl(room) {
-    let formatted = room.toLowerCase() + '/';
+    let formatted = room.toLowerCase();
+    formatted = encodeURIComponent(formatted) + '/';
     return formatted;
   }
 
@@ -51,7 +52,6 @@ class SonosController {
    */
   async _getResponse(action) {
     let url = this.sonosBaseUrl + this.actions[action];
-    url = encodeURI(url);
     let req = new Request(url=url);
     let resp = null;
 
@@ -72,7 +72,6 @@ class SonosController {
    */
   async _getRoomState(room) {
     let url = this.sonosBaseUrl + this._formatRoomForUrl(room) + this.actions.state;
-    url = encodeURI(url);
     let req = new Request(url=url);
     let resp = null;
 
@@ -98,11 +97,11 @@ class SonosController {
 
     if (params.length > 0) {
       for (let p of params) {
+        p = encodeURIComponent(p);
         url = `${url}/${p}`;
       }
     }
 
-    url = encodeURI(url);
     let req = new Request(url=url);
     let resp = null;
     
@@ -162,7 +161,6 @@ class SonosController {
   async isConnected() {
     // Calling the 'services' endpoint without any parameters should return {'status': 'success'}.
     let url = this.sonosBaseUrl + 'services';
-    url = encodeURI(url);
     let req = new Request(url=url);
     let connected = null;
 
