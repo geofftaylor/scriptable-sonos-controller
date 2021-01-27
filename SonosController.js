@@ -351,7 +351,7 @@ class SonosController {
 
   /**
    * Returns the details of the next queued track in `room`. The returned object contains the following keys:
-   * `artist`, `title`, `album`, `albumArtUri`, `room`, `type`, `service`, `station`, `trackUri`.
+   * `artist`, `title`, `album`, `albumArtUri`, `room`, `service`, `trackUri`.
    * @param {string} room The name of a room in the Sonos system.
    * @returns {(Object|string)} The details of the next track or an error message.
    */
@@ -384,7 +384,6 @@ class SonosController {
           album: nextTrack['album'],
           albumArtUri: nextTrack['absoluteAlbumArtUri'],
           room: room,
-          type: nextTrack['type'],
           service: service,
           trackUri: nextTrack['uri'],
         }
